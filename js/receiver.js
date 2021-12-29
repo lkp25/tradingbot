@@ -1,4 +1,13 @@
+const input = document.getElementById('input')
+const simulateBtn = document.getElementById('simulateBtn')
+const totalBTC = document.getElementById('totalBTC')
+const logger = document.getElementById('logger')
 
+//poczatkowa ilosc BTC w grze
+let availableBTC = 10.0
+
+//tablica logow:
+const logArray = []
 
 //   ===================================================================
 //   OBIEKTY PODSTAWOWE, SLUZACE DO WYKONANIA ANALIZ
@@ -194,6 +203,12 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
     //na 'read' zeby potwierdzic, ze odczytala poprawnie.
   }
 
+
+
+// ======================================================
+// FRONTENDOWE FUNKCJE DO WYSWIETLANIA W PRZEGLADARCE
+// ======================================================
+
 //funkcja liczaca total zarobiony BTC na koniec
   function countAllBTC(){
     const countBTCfrozenInActiveTrades = ACTIVE_TRADES.reduce((acc, trade) =>{
@@ -203,14 +218,41 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
     return countBTCfrozenInActiveTrades + availableBTC
   }
 
-  
-const prices = [44.5,43,40,35,40,42,41,35,30,37,31,25,48,17]
-let availableBTC = 10.0
+  function runSimulation(){
+    const inputValue = input.value
+    const inputArray = inputValue.split(',').map(value => parseFloat(value))
 
-prices.forEach(price =>{
-  setPreviousPriceAndCurrentPrice(price)
-  checkForNewTop()
-  checkActiveTradesIfShouldSell()
-  checkIfShouldBuyTheDip()
-  console.log(countAllBTC());
+    console.log(inputArray);   
+
+    inputArray.forEach(price =>{
+      setPreviousPriceAndCurrentPrice(price)
+      checkForNewTop()
+      checkActiveTradesIfShouldSell()
+      checkIfShouldBuyTheDip()
+
+
+    })
+    totalBTC.innerText = countAllBTC()
+    console.log(countAllBTC());
+  }
+
+simulateBtn.addEventListener('click', ()=>{
+  runSimulation()
 })
+
+
+
+
+// const prices = [44.5,43,40,35,40,42,41,35,30,37,31,25,48,17]
+
+
+
+// prices.forEach(price =>{
+//   setPreviousPriceAndCurrentPrice(price)
+//   checkForNewTop()
+//   checkActiveTradesIfShouldSell()
+//   checkIfShouldBuyTheDip()
+
+
+//   console.log(countAllBTC());
+// })

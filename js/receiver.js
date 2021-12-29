@@ -89,9 +89,18 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
     //   pomocnicza, wolana tylko, jak wykryjemy nowy top. ustawia nowe progi wejscia 
     // w globalnym obiekcie pomocniczym, z ktorego korzystaja ponizsze funkcje
     // analizujace co robic.
+
+    // wyczysc stare punkty wejscia. to bedzie 2D array.
     ENTRY_POINTS_FOR_CURRENT_TOP = []
+
+    //korzystajac ze zdefiniowanej strategii, ustal nowe kwoty punktow wejscia    
     STRATEGY_ENTRIES.forEach(entry => {
+      //jaki procent topu liczymy? 85, 80, 75, 70... ?
       const percent = entry[0]
+
+      //dodajemy nowy entry point. jest arrayem, 
+      // gdzie na indeksie 0 mamy ile procent calej puli BTC ma byc uzyte na trejd,
+      //a na indeksie 1 mamy konkretną kwotę poniżej ktorej należy dokonać zakupu
       ENTRY_POINTS_FOR_CURRENT_TOP.push([entry[1], percent * newTop / 100])
       
     })
@@ -107,9 +116,14 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
     //przepatrz cala tablice ACTIVE_TRADES i jesli aktualna cena wzrosla ponad
     // cene jaka nas interesuje - UTWORZ NOWY ROZKAZ 'sprzedaj' dla machiny odpowiedzialnej
      //zapisz rozkaz - output - w DB.
+
+     //sprawdz kazdy trejd czy jego prog do sprzedania nie zostal przekroczony
      ACTIVE_TRADES.forEach(trade => {
       if(trade.sellBackAt <= CURRENT_BINANCE_DATA.currentPrice){
+        //jezeli zostal, to usun ten trejd z tablicy aktywnych:
         ACTIVE_TRADES = ACTIVE_TRADES.filter(remain => trade !== remain)
+
+        // i zrealizuj zyski
         availableBTC += trade.amount * 1.06
         console.log('sold at ' + CURRENT_BINANCE_DATA.currentPrice);
         console.log('amount of ' + trade.amount * 1.06);
@@ -124,23 +138,27 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
     // UTWORZ NOWY ROZKAZ 'KUPUJ' za okreslony procent calosci portfela.
     //zapisz rozkaz - output - w DB.
 
+    //obecna cena:
+    const currentPrice = CURRENT_BINANCE_DATA.currentPrice
     //znajdz poziom wejscia, ktory zostal osiagniety
     const reachedPoint = ENTRY_POINTS_FOR_CURRENT_TOP.find(point => {
-      return point[1] > CURRENT_BINANCE_DATA.currentPrice
+      return point[1] > currentPrice
     })
-    //sprawdz czy juz nie zakupiono ponizej tego poziomu
+    //ULTRA WAZNE!!! sprawdz czy juz nie zakupiono wczesniej ponizej tego poziomu
+    //zeby przypadkiem nie zdublowac trejda
     const alreadyBought = ACTIVE_TRADES.find(trade => {
       return trade.boughtAt <= reachedPoint
     })
     //jesli jakis poziom zostal przelamany 
     // ORAZ jeszcze nie kupiono ponizej tego poziomu, to kup!
     if(reachedPoint && !alreadyBought){
-      console.log('i should buy now! ' + reachedPoint[1] + ' using ' + reachedPoint[0] + '% of my BTC')
-      
       //oblicz ile kupic
       const amountToBuy =  reachedPoint[0] * availableBTC / 100
-      
-      
+
+      console.log('poziom wejscia na ' + reachedPoint[1] + ' osiagniety.') 
+      console.log('udalo mi sie kupic po cenie ' + currentPrice )
+      console.log('nastepujaca ilosc ' +  amountToBuy)
+            
       
       //utworz obiekt informacyjny i dodaj go do ACTIVE_TRADES!
       const newTrade = {        
@@ -148,6 +166,8 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
           workerID: 'druhmachinaBinance',
           ticker: 'BTCUSDC',
           boughtAt: CURRENT_BINANCE_DATA.currentPrice,
+          //sprzedajemy 6% drozej liczac od hipotetycznego punktu wejscia,
+          // a nie od ceny po jakiej kupilismy, czyli zarabiamy troche wiecej niz 6%
           sellBackAt: reachedPoint[1] * 1.06,
           amount: amountToBuy         
       }
@@ -174,7 +194,7 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
     //na 'read' zeby potwierdzic, ze odczytala poprawnie.
   }
 
-const prices = [44.5,43,40,35,40,42,41,35,30,37,31,25,48]
+const prices = [44.5,43,40,35,40,42,41,35,30,37,31,25,48,17]
 let availableBTC = 10.0
 
 prices.forEach(price =>{

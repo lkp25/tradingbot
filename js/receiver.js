@@ -47,15 +47,15 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
 //tablica zawierajaca dane o aktualnych zakupach. Mozna rozwazyc osobna
 // tabele w DB ktora trzyma te same dane wrazie wu jakby z jakiegos powodu
 // skrypt sie wy738al na ryj i utracil dane z pamieci podrecznej.
-  const ACTIVE_TRADES = [
-    // {
-    //   where: 'binance',
-    //   workerID: 'druhmachinaBinance',
-    //   ticker: 'BTCUSDC',
-    //   boughtAt: 10000,
-    //   sellBackAt: 10600, //obliczone po jakiej kwocie ma sprzedac z zyskiem
-    //   amount: 0.2
-    // },
+  let ACTIVE_TRADES = [
+    {
+      where: 'binance',
+      workerID: 'druhmachinaBinance',
+      ticker: 'BTCUSDC',
+      boughtAt: 42,
+      sellBackAt: 43.5, //obliczone po jakiej kwocie ma sprzedac z zyskiem
+      amount: 0.2
+    },
    
     
   ]
@@ -92,7 +92,7 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
     ENTRY_POINTS_FOR_CURRENT_TOP = []
     STRATEGY_ENTRIES.forEach(entry => {
       const percent = entry[0]
-      ENTRY_POINTS_FOR_CURRENT_TOP.push(percent * newTop / 100)
+      ENTRY_POINTS_FOR_CURRENT_TOP.push([entry[1], percent * newTop / 100])
       
     })
     console.log(ENTRY_POINTS_FOR_CURRENT_TOP);
@@ -102,11 +102,21 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
   //   CZTERY FUNKCJE EGZEKUCYJNE, kontakt z baza danych:
 //   ===================================================================
 
-  function checkActiveTradesIfShouldSell(exchangeName){
+  function checkActiveTradesIfShouldSell(exchangeName = ''){
     //najpierw sprawdz czy to co juz mamy kupione nie powinno zostac sprzedane
     //przepatrz cala tablice ACTIVE_TRADES i jesli aktualna cena wzrosla ponad
     // cene jaka nas interesuje - UTWORZ NOWY ROZKAZ 'sprzedaj' dla machiny odpowiedzialnej
      //zapisz rozkaz - output - w DB.
+     ACTIVE_TRADES.forEach(trade => {
+      if(trade.sellBackAt >= CURRENT_BINANCE_DATA.currentPrice){
+        ACTIVE_TRADES = ACTIVE_TRADES.filter(remain => trade !== remain)
+        availableBTC += trade.amount * 1.06
+        console.log('sold at ' + CURRENT_BINANCE_DATA.currentPrice);
+        console.log('amount of ' + trade.amount * 1.06);
+        console.log('available BTC: ' + availableBTC);
+      }
+     })
+     console.log(ACTIVE_TRADES);
   }
   
   function checkIfShouldBuyTheDip(exchangeName){
@@ -137,4 +147,5 @@ let availableBTC = 10.0
 prices.forEach(price =>{
   setPreviousPriceAndCurrentPrice(price)
   checkForNewTop()
+  checkActiveTradesIfShouldSell()
 })

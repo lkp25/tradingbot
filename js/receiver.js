@@ -194,6 +194,16 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
     //na 'read' zeby potwierdzic, ze odczytala poprawnie.
   }
 
+//funkcja liczaca total zarobiony BTC na koniec
+  function countAllBTC(){
+    const countBTCfrozenInActiveTrades = ACTIVE_TRADES.reduce((acc, trade) =>{
+      acc += trade.amount
+      return acc
+    }, 0)
+    return countBTCfrozenInActiveTrades + availableBTC
+  }
+
+  
 const prices = [44.5,43,40,35,40,42,41,35,30,37,31,25,48,17]
 let availableBTC = 10.0
 
@@ -202,4 +212,5 @@ prices.forEach(price =>{
   checkForNewTop()
   checkActiveTradesIfShouldSell()
   checkIfShouldBuyTheDip()
+  console.log(countAllBTC());
 })

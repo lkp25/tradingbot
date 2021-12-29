@@ -35,11 +35,7 @@ const CURRENT_BINANCE_DATA = {
 }
 
 //ten obiekt pomocniczy trzyma dane o poziomach wejscia dla aktualnego topa.
-const ENTRY_POINTS_FOR_CURRENT_TOP = {
-    first: 40000,
-    second: 38000,
-    third: 36000
-}
+let  ENTRY_POINTS_FOR_CURRENT_TOP = []
 // ALTERNATYWNIE:
 //ten obiekt pomocniczy moze byc tez tablica po prostu, 
 // byc moze tak bedzie wygodniej po nim iterowac sprawdzajac 
@@ -82,8 +78,9 @@ const ENTRY_POINTS_FOR_CURRENT_TOP = {
     // analizuje wg jakichs kryteriow czy ustawic nowy top czy nie.
     //jesli tak to currentTop zmienia sie na wartosc najnowszej ceny.
     //wtedy nalezy ustawic NOWE PROGI WEJSCIA - setNewEntryPoints(newTop).
-    if(CURRENT_BINANCE_DATA.currentTop < CURRENT_BINANCE_DATA.currentPrice){
+    if(CURRENT_BINANCE_DATA.previousPrice < CURRENT_BINANCE_DATA.currentPrice){
       CURRENT_BINANCE_DATA.currentTop = CURRENT_BINANCE_DATA.currentPrice
+      setNewEntryPoints(CURRENT_BINANCE_DATA.currentTop)
     }
     console.log(CURRENT_BINANCE_DATA);
   }
@@ -92,6 +89,13 @@ const ENTRY_POINTS_FOR_CURRENT_TOP = {
     //   pomocnicza, wolana tylko, jak wykryjemy nowy top. ustawia nowe progi wejscia 
     // w globalnym obiekcie pomocniczym, z ktorego korzystaja ponizsze funkcje
     // analizujace co robic.
+    ENTRY_POINTS_FOR_CURRENT_TOP = []
+    STRATEGY_ENTRIES.forEach(entry => {
+      const percent = entry[0]
+      ENTRY_POINTS_FOR_CURRENT_TOP.push(percent * newTop / 100)
+      
+    })
+    console.log(ENTRY_POINTS_FOR_CURRENT_TOP);
   }
 
   //   ===================================================================
@@ -127,7 +131,7 @@ const ENTRY_POINTS_FOR_CURRENT_TOP = {
     //na 'read' zeby potwierdzic, ze odczytala poprawnie.
   }
 
-const prices = [31,32,35,40,42,41,35,30,37,31,25,48]
+const prices = [44.5,43,40,35,40,42,41,35,30,37,31,25,48]
 let availableBTC = 10.0
 
 prices.forEach(price =>{

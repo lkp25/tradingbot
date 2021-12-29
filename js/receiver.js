@@ -134,9 +134,13 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
 
         // i zrealizuj zyski
         availableBTC += trade.amount * 1.06
-        console.log('sold at ' + CURRENT_BINANCE_DATA.currentPrice);
-        console.log('amount of ' + trade.amount * 1.06);
-        console.log('available BTC: ' + availableBTC);
+         //utworz loga z tej sprzedazy
+         const newLog = `sprzedałem po cenie ${CURRENT_BINANCE_DATA.currentPrice}
+         następującą ilość: ${trade.amount * 1.06}
+        dostępna pula BTC: ${availableBTC}`
+        console.log(newLog)
+        logArray.push(newLog)
+        
       }
      })
      console.log(ACTIVE_TRADES);
@@ -164,10 +168,12 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
       //oblicz ile kupic
       const amountToBuy =  reachedPoint[0] * availableBTC / 100
 
-      console.log('poziom wejscia na ' + reachedPoint[1] + ' osiagniety.') 
-      console.log('udalo mi sie kupic po cenie ' + currentPrice )
-      console.log('nastepujaca ilosc ' +  amountToBuy)
-            
+      //utworz loga z tego zakupu
+      const newLog = `poziom wejscia na ${reachedPoint[1]} osiagniety. 
+      udalo mi sie kupic po cenie ${currentPrice} 
+      nastepujaca ilosc ${amountToBuy}`
+      console.log(newLog)
+      logArray.push(newLog)
       
       //utworz obiekt informacyjny i dodaj go do ACTIVE_TRADES!
       const newTrade = {        
@@ -217,25 +223,43 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
     }, 0)
     return countBTCfrozenInActiveTrades + availableBTC
   }
+  //funkcja wyswietlajaca wszystkie logi z trejdow w UI:
+  function showLogs(){
+    logArray.forEach((log, index) => {
+      const logEl = document.createElement('p')
+      logEl.innerText = `log ${index}:
+      ${log}
+      
+      `
+      logger.appendChild(logEl)
+    })
+    
+  }
 
+  //funkcja odpowiedzialna za wykonanie wszystkich ruchow i wyswietlenie w UI
   function runSimulation(){
+    //wyciag dane (ceny) z user inputa
     const inputValue = input.value
     const inputArray = inputValue.split(',').map(value => parseFloat(value))
-
     console.log(inputArray);   
 
+    //przemiel przez wszystkie funkcje kazda wprowadzona do symulacji zmiane ceny.
     inputArray.forEach(price =>{
       setPreviousPriceAndCurrentPrice(price)
       checkForNewTop()
       checkActiveTradesIfShouldSell()
       checkIfShouldBuyTheDip()
-
-
     })
+
+    //wyswietl finalny osiagniety wynik w UI
     totalBTC.innerText = countAllBTC()
     console.log(countAllBTC());
+
+    //pokaz logi w UI
+    showLogs()
   }
 
+  //odpal cala symulacje po kliknieciu na button
 simulateBtn.addEventListener('click', ()=>{
   runSimulation()
 })

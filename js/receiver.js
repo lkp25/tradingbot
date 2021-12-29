@@ -108,7 +108,7 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
     // cene jaka nas interesuje - UTWORZ NOWY ROZKAZ 'sprzedaj' dla machiny odpowiedzialnej
      //zapisz rozkaz - output - w DB.
      ACTIVE_TRADES.forEach(trade => {
-      if(trade.sellBackAt >= CURRENT_BINANCE_DATA.currentPrice){
+      if(trade.sellBackAt <= CURRENT_BINANCE_DATA.currentPrice){
         ACTIVE_TRADES = ACTIVE_TRADES.filter(remain => trade !== remain)
         availableBTC += trade.amount * 1.06
         console.log('sold at ' + CURRENT_BINANCE_DATA.currentPrice);
@@ -119,11 +119,44 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
      console.log(ACTIVE_TRADES);
   }
   
-  function checkIfShouldBuyTheDip(exchangeName){
+  function checkIfShouldBuyTheDip(exchangeName =''){
     //jesli cena spadla od szczytu o jakis procent ktory jest progiem do zakupu
     // UTWORZ NOWY ROZKAZ 'KUPUJ' za okreslony procent calosci portfela.
     //zapisz rozkaz - output - w DB.
-    
+
+    //znajdz poziom wejscia, ktory zostal osiagniety
+    const reachedPoint = ENTRY_POINTS_FOR_CURRENT_TOP.find(point => {
+      return point[1] > CURRENT_BINANCE_DATA.currentPrice
+    })
+    //sprawdz czy juz nie zakupiono ponizej tego poziomu
+    const alreadyBought = ACTIVE_TRADES.find(trade => {
+      return trade.boughtAt <= reachedPoint
+    })
+    //jesli jakis poziom zostal przelamany 
+    // ORAZ jeszcze nie kupiono ponizej tego poziomu, to kup!
+    if(reachedPoint && !alreadyBought){
+      console.log('i should buy now! ' + reachedPoint[1] + ' using ' + reachedPoint[0] + '% of my BTC')
+      
+      //oblicz ile kupic
+      const amountToBuy =  reachedPoint[0] * availableBTC / 100
+      
+      
+      
+      //utworz obiekt informacyjny i dodaj go do ACTIVE_TRADES!
+      const newTrade = {        
+          where: 'binance',
+          workerID: 'druhmachinaBinance',
+          ticker: 'BTCUSDC',
+          boughtAt: CURRENT_BINANCE_DATA.currentPrice,
+          sellBackAt: reachedPoint[1] * 1.06,
+          amount: amountToBuy         
+      }
+      ACTIVE_TRADES.push(newTrade)
+
+      //KUP - odejmij od puli dostepnego BTC
+      availableBTC -= amountToBuy
+      console.log(availableBTC);
+    }
   }
   
   function checkForArbitrageOpportunity(exchange1, exchange2, exchange3){
@@ -148,4 +181,5 @@ prices.forEach(price =>{
   setPreviousPriceAndCurrentPrice(price)
   checkForNewTop()
   checkActiveTradesIfShouldSell()
+  checkIfShouldBuyTheDip()
 })

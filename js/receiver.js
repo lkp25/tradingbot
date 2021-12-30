@@ -3,12 +3,16 @@ const simulateBtn = document.getElementById('simulateBtn')
 const resetBtn = document.getElementById('resetBtn')
 const totalBTC = document.getElementById('totalBTC')
 const logger = document.getElementById('logger')
+const tops = document.getElementById('tops')
 
 //poczatkowa ilosc BTC w grze
 let availableBTC = 10.0
 
 //tablica logow:
 let logArray = []
+
+//tablica lokalnych topwow:
+let topArray = []
 
 //   ===================================================================
 //   OBIEKTY PODSTAWOWE, SLUZACE DO WYKONANIA ANALIZ
@@ -37,11 +41,11 @@ let STRATEGY_ENTRIES = [
 // zawiera dane na temat ostatniej i aktualnej ceny,
 //aktualnego topa, ostatniego punktu na ktorym był zakup i jak duzy byl zakup.
 const CURRENT_BINANCE_DATA = { 
-    previousPrice: 39.7,
-    currentPrice: 39.5,
-    currentTop: 44.5,
-    lastBuyAt: 40.0,
-    lastBoughtAmount: 0.2
+    previousPrice: 0,
+    currentPrice: 0,
+    currentTop: 0,
+    lastBuyAt: 0,
+    lastBoughtAmount: 0
 }
 
 //ten obiekt pomocniczy trzyma dane o poziomach wejscia dla aktualnego topa.
@@ -85,21 +89,24 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
   }
   
   function checkForNewTop(){
-    //tutej bardziej zawila logika warunkowa - 
-    // analizuje wg jakichs kryteriow czy ustawic nowy top czy nie.
+    //czy jest nowy lokalny top?
     //jesli tak to currentTop zmienia sie na wartosc najnowszej ceny.
     //wtedy nalezy ustawic NOWE PROGI WEJSCIA - setNewEntryPoints(newTop).
+
     if(CURRENT_BINANCE_DATA.previousPrice < CURRENT_BINANCE_DATA.currentPrice){
       CURRENT_BINANCE_DATA.currentTop = CURRENT_BINANCE_DATA.currentPrice
+      //ustaw nowe progi wejscia dla nowego topa:
       setNewEntryPoints(CURRENT_BINANCE_DATA.currentTop)
+      //dodaj do tablicy lokalnych topow dla statystyk:
+      topArray.push(CURRENT_BINANCE_DATA.currentTop)
     }
     console.log(CURRENT_BINANCE_DATA);
   }
 
   function setNewEntryPoints(newTop){
-    //   pomocnicza, wolana tylko, jak wykryjemy nowy top. ustawia nowe progi wejscia 
+    // pomocnicza, wolana tylko, jak wykryjemy nowy top. ustawia nowe progi wejscia 
     // w globalnym obiekcie pomocniczym, z ktorego korzystaja ponizsze funkcje
-    // analizujace co robic.
+    // egzekucyjne.
 
     // wyczysc stare punkty wejscia. to bedzie 2D array.
     ENTRY_POINTS_FOR_CURRENT_TOP = []

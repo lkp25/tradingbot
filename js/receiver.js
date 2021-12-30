@@ -236,13 +236,23 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
   function showLogs(){
     logArray.forEach((log, index) => {
       const logEl = document.createElement('p')
-      logEl.innerText = `log ${index}:
+      logEl.innerText = `log ${index + 1}:
       ${log}
       
       `
       logger.appendChild(logEl)
+    })    
+  }
+
+  //funkcja wyswtielajaca wykryte topy w UI:
+  function showTops(){
+    topArray.forEach((top, index) =>{
+      const topEl = document.createElement('p')
+      topEl.innerText = `top ${index + 1}:
+      ${top}      
+      `
+      tops.appendChild(topEl)
     })
-    
   }
   //funkcja resetująca widok i dane w modelu, user inputów nie czyści!
   function resetSimulation(){
@@ -251,6 +261,8 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
     availableBTC = 10.0
     totalBTC.textContent = '-----------'
     ACTIVE_TRADES = []
+    topArray = []
+    tops.innerHTML = ''
   }
 
 
@@ -275,6 +287,8 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
 
     //pokaz logi w UI
     showLogs()
+    //pokaz topy w UI
+    showTops()
   }
 
   //odpal cala symulacje po kliknieciu na button

@@ -208,8 +208,11 @@ function getValidStrategy(){
     //ULTRA WAZNE!!! sprawdz czy juz nie zakupiono wczesniej ponizej tego poziomu
     //zeby przypadkiem nie zdublowac trejda
     const alreadyBought = ACTIVE_TRADES.find(trade => {
-      return trade.boughtAt <= reachedPoint
+      if(reachedPoint){
+        return trade.boughtAt <= reachedPoint[1]
+      }
     })
+    
     //jesli jakis poziom zostal przelamany 
     // ORAZ jeszcze nie kupiono ponizej tego poziomu, to kup!
     if(reachedPoint && !alreadyBought){
@@ -217,7 +220,8 @@ function getValidStrategy(){
       const amountToBuy =  reachedPoint[0] * availableBTC / 100
 
       //utworz loga z tego zakupu
-      const newLog = `poziom wejscia na ${reachedPoint[1]} osiagniety. 
+      const newLog = `poziom wejscia na ${reachedPoint[1]} osiagniety, 
+      aktualny top: ${CURRENT_BINANCE_DATA.currentTop}. 
       udalo mi sie kupic po cenie ${currentPrice} 
       nastepujaca ilosc ${amountToBuy}`
       console.log(newLog)

@@ -4,6 +4,8 @@ const resetBtn = document.getElementById('resetBtn')
 const totalBTC = document.getElementById('totalBTC')
 const logger = document.getElementById('logger')
 const tops = document.getElementById('tops')
+const progi = document.getElementById('progi')
+const pule = document.getElementById('pule')
 
 //poczatkowa ilosc BTC w grze
 let availableBTC = 10.0
@@ -76,8 +78,27 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
   ]
 
 //   ===================================================================
-//   TRZY FUNKCJE PODSTAWOWE, ANALITYCZNE:
+//   FUNKCJE PODSTAWOWE, ANALITYCZNE:
 //   ===================================================================  
+
+//podstawowa walidacja inputow strategii - nie jest idiotoodporna,
+// tylko najwazniejsze przypadki brzegowe:
+function strategyValidator(){
+  //sprawdz czy inputy sa uzupelnione wartosciami:
+  if(!progi.value || !pule.value){
+    console.log('nie uzupelniono strategii');
+    return false
+  }
+  //sprawdz czy ilosc progow jest rowna ilosci pul:
+  const levels = progi.value.split(',').length
+  const amounts = pule.value.split(',').length
+  if(amounts !== levels){
+    console.log('ilosc pul nie zgadza sie z iloscia progów');
+    return false
+  }
+  //przeszlo walidacje:
+  return true
+}
 
   function setPreviousPriceAndCurrentPrice(newPrice){
     //superprosta funkcja
@@ -202,21 +223,22 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
       console.log(availableBTC);
     }
   }
+
+  //TE SA NA RAZIE NIEISTOTNE
+  // function checkForArbitrageOpportunity(exchange1, exchange2, exchange3){
+  //   //analizuje roznice w cenie dla danej pary na trzech gieldach,
+  //   //cene posrednia odrzuca, porownuje najtansza i najdrozsza
+  //   //jesli jest jakas superokazja typu 5% spreada to sprzedaje
+  //   // na jednej gieldzie a na drugiej kupuje taka sama ilosc- 
+  //   //zapisuje dwa rozkazy-outputy- w dwoch osobnych tabelach DB.
+  // }
   
-  function checkForArbitrageOpportunity(exchange1, exchange2, exchange3){
-    //analizuje roznice w cenie dla danej pary na trzech gieldach,
-    //cene posrednia odrzuca, porownuje najtansza i najdrozsza
-    //jesli jest jakas superokazja typu 5% spreada to sprzedaje
-    // na jednej gieldzie a na drugiej kupuje taka sama ilosc- 
-    //zapisuje dwa rozkazy-outputy- w dwoch osobnych tabelach DB.
-  }
-  
-  function writePassiveLog(){
-      //wykonuje sie tylko jesli nie ma podstaw do sprzedania/kupienia/arbitrazu.
-    //   czyli najczesciej. zapisuje rekord w DB ze statusem 'pending' i akcja 'HODL'
-    //gdy druchmachina odczyta rekord z taka akcja, zmienia w bazie status 'pending'
-    //na 'read' zeby potwierdzic, ze odczytala poprawnie.
-  }
+  // function writePassiveLog(){
+  //     //wykonuje sie tylko jesli nie ma podstaw do sprzedania/kupienia/arbitrazu.
+  //   //   czyli najczesciej. zapisuje rekord w DB ze statusem 'pending' i akcja 'HODL'
+  //   //gdy druchmachina odczyta rekord z taka akcja, zmienia w bazie status 'pending'
+  //   //na 'read' zeby potwierdzic, ze odczytala poprawnie.
+  // }
 
 
 
@@ -268,6 +290,23 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
 
   //funkcja odpowiedzialna za wykonanie wszystkich ruchow i wyswietlenie w UI
   function runSimulation(){
+    //zwaliduj startegie. jesli jest niepoprawna, zakoncz symulacje i wywal error w UI.
+    if(!strategyValidator()){
+      const errorMsg = document.createElement('div')
+      errorMsg.style.width = '100vw'
+      errorMsg.style.height = '100vh'
+      errorMsg.style.position = 'absolute'
+      errorMsg.style.top = '0'
+      errorMsg.style.background = 'red'
+      errorMsg.innerText = " NIEPOPRAWNA STRATEGIA!"
+      document.body.appendChild(errorMsg)
+      setTimeout(() => {
+        errorMsg.remove()
+      }, 2000);
+      return
+    }
+
+
     //wyciag dane (ceny) z user inputa
     const inputValue = input.value
     const inputArray = inputValue.split(',').map(value => parseFloat(value))

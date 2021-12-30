@@ -6,16 +6,19 @@
     <title>Web Crypto API example</title>
     <link rel="stylesheet" href="./css/styles.css">
   </head>
-
+  
   <body>
     
+    <button id="simulateBtn">SYMULACJA</button>
     <p>Wpisz swoja strategie.</p>
     <p>w pierwszym polu kolejne progi wejscia (w procentach)</p>
-    <span>PROGI: </span> <input style="background: rgb(231, 199, 199); width: 50%" type="text">
+    <span>PROGI: </span> <input id="progi" style="background: rgb(231, 199, 199); width: 50%" type="text">
     <br>
+
     <p>w drugim polu procent puli bazowej, za jaki wchodzimy na danym progu.</p>
-    <span>PULE: </span> <input style="background: rgb(231, 199, 199); width: 50%"  type="text">
+    <span>PULE: </span> <input id="pule" style="background: rgb(231, 199, 199); width: 50%"  type="text">
     <br>
+
     <p>przykladowo, jezeli chcesz dokonac pierwszego zakupu na 85% od szczytu i dalej kolejne progi mieć co 5% w dół, 
       łącznie 10 progów, i każdy z nich kupuje za równą kwotę 10% puli startowej, to wpisujesz w pierwsze pole: <br>
       "85,80,75,70,65,60,55,50,45,40" <br> a w drugie pole: <br> "10,10,10,10,10,10,10,10,10,10"
@@ -25,7 +28,6 @@
     <p>Ponizej zobaczysz logi ze wszytkich akcji wykonanych przez skrypt.</p>
     <p>Przycisk 'RESET' wyczysci logi z poprzedniej symulacji, ale nie wyczysci danych ktore wpisujesz w pola ponizej. Kliknij go koniecznie, jesli chcesz przeprowadzić kolejną symulację</p>
     <input style="width: 100%; background: rgb(164, 189, 127);" id="input" type="text" placeholder="np. 42,45,46,40,36,30,25,30,35,31,30,27,39">
-    <button id="simulateBtn">SYMULACJA</button>
     <button id="resetBtn" style="color: red;" id="simulateBtn">RESET</button>
     <p>z poczatkowej ilosci 10 BTC  uzyskałeś:</p>
     <div id="totalBTC">-------------</div>

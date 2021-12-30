@@ -6,3 +6,11 @@
     margin: 0;
     padding: 0;
 }
+.logs-container{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem;
+}
+.logs-container div{
+    border: 1px solid black;
+}

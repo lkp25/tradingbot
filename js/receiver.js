@@ -100,6 +100,21 @@ function strategyValidator(){
   return true
 }
 
+//funkcja pobierająca strategie z inputow do data modelu:
+function getValidStrategy(){
+  //pobierz dane z inputow i przerob w arraye
+  const levels = progi.value.split(',')
+  const amounts = pule.value.split(',')
+
+  
+  const strategyArray = []
+  for(let i = 0; i < levels.length; i++){
+    strategyArray.push([parseFloat(levels[i]),parseFloat(amounts[i])])
+  }
+  //zmien dotychczasowa strategie w data model na powyzsza opracowana strategie
+  STRATEGY_ENTRIES = strategyArray
+}
+
   function setPreviousPriceAndCurrentPrice(newPrice){
     //superprosta funkcja
     //ustawia poprawnie ceny - poprzednia (z poprzedniej aktualnej) 
@@ -306,6 +321,8 @@ function strategyValidator(){
       return
     }
 
+    //po zwalidowaniu strategii pobierz ja:
+    getValidStrategy()
 
     //wyciag dane (ceny) z user inputa
     const inputValue = input.value

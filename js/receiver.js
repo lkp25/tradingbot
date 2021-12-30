@@ -6,9 +6,13 @@ const logger = document.getElementById('logger')
 const tops = document.getElementById('tops')
 const progi = document.getElementById('progi')
 const pule = document.getElementById('pule')
+const profitprocentInput = document.getElementById('profitprocentInput')
 
 //poczatkowa ilosc BTC w grze
 let availableBTC = 10.0
+
+//procent zysku jaki nas interesuje na kazdy trejd. Domyslnie 6%:
+let profitPercent = 1.06
 
 //tablica logow:
 let logArray = []
@@ -113,6 +117,7 @@ function getValidStrategy(){
   STRATEGY_ENTRIES = strategyArray
 }
 
+
   function setPreviousPriceAndCurrentPrice(newPrice){
     //superprosta funkcja
     //ustawia poprawnie ceny - poprzednia (z poprzedniej aktualnej) 
@@ -176,10 +181,10 @@ function getValidStrategy(){
         ACTIVE_TRADES = ACTIVE_TRADES.filter(remain => trade !== remain)
 
         // i zrealizuj zyski
-        availableBTC += trade.amount * 1.06
+        availableBTC += trade.amount * profitPercent
          //utworz loga z tej sprzedazy
          const newLog = `sprzedałem po cenie ${CURRENT_BINANCE_DATA.currentPrice}
-         następującą ilość: ${trade.amount * 1.06}
+         następującą ilość: ${trade.amount * profitPercent}
         dostępna pula BTC: ${availableBTC}`
         console.log(newLog)
         logArray.push(newLog)
@@ -226,7 +231,7 @@ function getValidStrategy(){
           boughtAt: CURRENT_BINANCE_DATA.currentPrice,
           //sprzedajemy 6% drozej liczac od hipotetycznego punktu wejscia,
           // a nie od ceny po jakiej kupilismy, czyli zarabiamy troche wiecej niz 6%
-          sellBackAt: reachedPoint[1] * 1.06,
+          sellBackAt: reachedPoint[1] * profitPercent,
           amount: amountToBuy         
       }
       ACTIVE_TRADES.push(newTrade)
@@ -333,12 +338,15 @@ function getValidStrategy(){
     //po zwalidowaniu strategii pobierz ja:
     getValidStrategy()
 
-    //wyciag dane (ceny) z user inputa
+    //ustaw procent profitu dla strategii ktory user wybral
+    profitPercent = (parseFloat(profitprocentInput.value) + 100) / 100
+    console.log(profitPercent);
+    //ustaw dane (ceny) z user inputa
     const inputValue = input.value
     const inputArray = inputValue.split(',').map(value => parseFloat(value))
     console.log(inputArray);   
 
-    //przemiel przez wszystkie funkcje wykonawcze kazda wprowadzona do symulacji zmiane ceny.
+    //przemiel przez wszystkie funkcje wykonawcze kazda wprowadzona do symulacji cene.
     inputArray.forEach(price =>{
       setPreviousPriceAndCurrentPrice(price)
       checkForNewTop()
@@ -358,6 +366,7 @@ function getValidStrategy(){
 
   //odpal cala symulacje po kliknieciu na button
 simulateBtn.addEventListener('click', ()=>{
+  resetSimulation()
   runSimulation()
 })
 resetBtn.addEventListener('click', ()=>{

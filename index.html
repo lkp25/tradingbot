@@ -10,25 +10,32 @@
   <body>
     
     <p>Wpisz swoja strategie.</p>
+    <h4>1. Jaki procent profitu chcesz z kazdego trejda?</h4>
+    <p>jesli nic nie wpiszesz, domyslnie algorytm sprzedaje kazda pozycje 6% drozej niz ja zakupil.</p>
+    <input value="6" id="profitprocentInput" style="background: rgb(153, 172, 229);" type="number">
+   <br>
+   <h4>2. Jakie co ile sa progi wejscia i jak duza jest pula na prog?</h4>
     <p>przykladowo, jezeli chcesz dokonac pierwszego zakupu na 85% od szczytu i dalej kolejne progi mieć co 5% w dół, 
       łącznie 10 progów, i każdy z nich kupuje za równą kwotę 10% puli startowej, to wpisujesz w pierwsze pole: <br>
       "85,80,75,70,65,60,55,50,45,40" <br> a w drugie pole: <br> "10,10,10,10,10,10,10,10,10,10"
     </p>
     <p>w pierwszym polu kolejne progi wejscia (w procentach)</p>
-    <span>PROGI: </span> <input id="progi" style="background: rgb(231, 199, 199); width: 50%" type="text">
+    <span>PROGI: </span> <input value="85,80,75,70,65,60,55,50,45,40" id="progi" style="background: rgb(231, 199, 199); width: 50%" type="text">
     <br>
     
     <p>w drugim polu procent puli bazowej, za jaki wchodzimy na danym progu.</p>
-    <span>PULE: </span> <input id="pule" style="background: rgb(231, 199, 199); width: 50%"  type="text">
+    <span>PULE: </span> <input value="10,10,10,10,10,10,10,10,10,10" id="pule" style="background: rgb(231, 199, 199); width: 50%"  type="text">
     <br>
     
-    <p>pierwsza liczba z pierwszego pola(dany prog) odpowiada pierwszej z drugiego pola(dana pula), druga - drugiej itd. Ilosc progow oczywiscie musi byc rowna liczbie pul!</p> <br>
+    <p>pierwsza liczba z pierwszego pola(dany prog) odpowiada pierwszej z drugiego pola(dana pula), druga - drugiej itd. Ilosc progow oczywiscie musi byc rowna liczbie pul!</p> <br><br>
+
+    <h4>3.Wprowadz dowolna ilosc cen do symulacji</h4>
     <p>wpisz w zielonym polu ponizej kolejne ceny BTC dla symulacji, oddzielajac je przecinkiem (bez spacji) i kliknij przycisk SYMULACJA</p>
     <p>Ponizej zobaczysz logi ze wszytkich akcji wykonanych przez skrypt.</p>
-    <p>PRO-TIP: abys mogl zobaczyc ile finalnie zarobila strategia, jako ostatnia cene wpisz liczbe 6-7% wieksza niz najwyzszy top. Dzieki temu algorytm na pewno sprzeda wszystkie pozycje.</p>
-    <textarea style="width: 100%; background: rgb(164, 189, 127);" id="input" type="text" placeholder="np. 42,45,46,40,36,30,25,30,35,31,30,27,39"></textarea>
-    <p>Przycisk 'RESET' wyczysci logi z poprzedniej symulacji, ale nie wyczysci danych ktore wpisujesz w pola ponizej. Kliknij go koniecznie, jesli chcesz przeprowadzić kolejną symulację</p>
-    <p>algorytm sprzedaje kazda pozycje 6% drozej niz ja zakupil.</p>
+    <p>PRO-TIP: abys mogl zobaczyc ile finalnie zarobila strategia, jako ostatnia cene wpisz liczbe zblizona do najwyzszego topa. Dzieki temu algorytm na pewno sprzeda wszystkie pozycje.</p>
+    <textarea  style="width: 100%; background: rgb(164, 189, 127);" id="input" type="text" >100,90,86,82,84,90,92</textarea>
+    <p>Przycisk 'RESET' wyczysci logi z poprzedniej symulacji, ale nie wyczysci danych ktore wpisujesz w pola ponizej. Nie musisz go klikac chcac przeprowadzic nowa symulacje - przycisk "SYMULACJA" tez wyczysci poprzednie dane i zastapi je nowymi</p>
+    
     <button id="simulateBtn">SYMULACJA</button>
     <button id="resetBtn" style="color: red;" id="simulateBtn">RESET</button>
     <h2>z poczatkowej ilosci 10 BTC  uzyskałeś:</h2>
@@ -44,7 +51,7 @@
         <p id="tops"></p>
       </div>
       <div>
-        <h3>LOGGER:</h3>
+        <h3>LOGGER TREJDOW:</h3>
         <div id="logger"></div>
       </div>
 

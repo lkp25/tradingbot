@@ -42,12 +42,10 @@ let STRATEGY_ENTRIES = [
 //globalny obiekt pomocniczy osobny dla kazdej gieldy 
 // zawiera dane na temat ostatniej i aktualnej ceny,
 //aktualnego topa, ostatniego punktu na ktorym był zakup i jak duzy byl zakup.
-const CURRENT_BINANCE_DATA = { 
+let CURRENT_BINANCE_DATA = { 
     previousPrice: 0,
     currentPrice: 0,
-    currentTop: 0,
-    lastBuyAt: 0,
-    lastBoughtAmount: 0
+    currentTop: 0,   
 }
 
 //ten obiekt pomocniczy trzyma dane o poziomach wejscia dla aktualnego topa.
@@ -295,11 +293,21 @@ function getValidStrategy(){
   function resetSimulation(){
     logArray = []
     logger.innerHTML = ''
-    availableBTC = 10.0
-    totalBTC.textContent = '-----------'
-    ACTIVE_TRADES = []
+
     topArray = []
     tops.innerHTML = ''
+
+    availableBTC = 10.0
+    totalBTC.textContent = '-----------'
+
+    ACTIVE_TRADES = []
+    
+    //wyzeruj dane gieldowe:
+    CURRENT_BINANCE_DATA = { 
+      previousPrice: 0,
+      currentPrice: 0,
+      currentTop: 0,   
+    }
   }
 
 
@@ -315,6 +323,7 @@ function getValidStrategy(){
       errorMsg.style.background = 'red'
       errorMsg.innerText = " NIEPOPRAWNA STRATEGIA!"
       document.body.appendChild(errorMsg)
+      window.scrollTo(0,0)
       setTimeout(() => {
         errorMsg.remove()
       }, 2000);

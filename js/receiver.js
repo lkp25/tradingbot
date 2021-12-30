@@ -1,5 +1,6 @@
 const input = document.getElementById('input')
 const simulateBtn = document.getElementById('simulateBtn')
+const resetBtn = document.getElementById('resetBtn')
 const totalBTC = document.getElementById('totalBTC')
 const logger = document.getElementById('logger')
 
@@ -7,7 +8,7 @@ const logger = document.getElementById('logger')
 let availableBTC = 10.0
 
 //tablica logow:
-const logArray = []
+let logArray = []
 
 //   ===================================================================
 //   OBIEKTY PODSTAWOWE, SLUZACE DO WYKONANIA ANALIZ
@@ -19,7 +20,7 @@ const logArray = []
 // sa poziomy wejscia. Czyli w bazowej strategii mamy rowne procenty puli dla 
 // kazdego poziomu, pierwszy poziom na -15% od szczytu i kolejne co 5% w dol:
 //ten obiekt pomocniczy moze byc np 2D-arrayem:
-const STRATEGY_ENTRIES = [
+let STRATEGY_ENTRIES = [
     [85, 10], //10 puli po 10%. pierwsze wejscie jak cena osiagnie 85% topa.
     [80, 10],
     [75, 10],
@@ -57,14 +58,15 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
 // tabele w DB ktora trzyma te same dane wrazie wu jakby z jakiegos powodu
 // skrypt sie wy738al na ryj i utracil dane z pamieci podrecznej.
   let ACTIVE_TRADES = [
-    {
-      where: 'binance',
-      workerID: 'druhmachinaBinance',
-      ticker: 'BTCUSDC',
-      boughtAt: 42,
-      sellBackAt: 43.5, //obliczone po jakiej kwocie ma sprzedac z zyskiem
-      amount: 0.2
-    },
+    //tak wyglada pojedynczy obiekt w tej tablicy:
+    // {
+    //   where: 'binance',
+    //   workerID: 'druhmachinaBinance',
+    //   ticker: 'BTCUSDC',
+    //   boughtAt: 42,
+    //   sellBackAt: 43.5, //obliczone po jakiej kwocie ma sprzedac z zyskiem
+    //   amount: 0.2
+    // },
    
     
   ]
@@ -235,6 +237,15 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
     })
     
   }
+  //funkcja resetująca widok i dane w modelu, user inputów nie czyści!
+  function resetSimulation(){
+    logArray = []
+    logger.innerHTML = ''
+    availableBTC = 10.0
+    totalBTC.textContent = '-----------'
+    ACTIVE_TRADES = []
+  }
+
 
   //funkcja odpowiedzialna za wykonanie wszystkich ruchow i wyswietlenie w UI
   function runSimulation(){
@@ -243,7 +254,7 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
     const inputArray = inputValue.split(',').map(value => parseFloat(value))
     console.log(inputArray);   
 
-    //przemiel przez wszystkie funkcje kazda wprowadzona do symulacji zmiane ceny.
+    //przemiel przez wszystkie funkcje wykonawcze kazda wprowadzona do symulacji zmiane ceny.
     inputArray.forEach(price =>{
       setPreviousPriceAndCurrentPrice(price)
       checkForNewTop()
@@ -262,6 +273,9 @@ let  ENTRY_POINTS_FOR_CURRENT_TOP = []
   //odpal cala symulacje po kliknieciu na button
 simulateBtn.addEventListener('click', ()=>{
   runSimulation()
+})
+resetBtn.addEventListener('click', ()=>{
+  resetSimulation()
 })
 
 
